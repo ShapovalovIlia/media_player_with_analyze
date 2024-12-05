@@ -1,4 +1,3 @@
-1) pip install -e .
-2) poetry install
-3) choose file from entry_point and run it
-
+1) python3 -m venv venv
+2) source venv/bin/activate
+3) pip install -e .
