@@ -1,10 +1,13 @@
 import json
 import importlib.resources
+
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg as FigureCanvas,
 )
+
 from matplotlib.figure import Figure
 import PySide6.QtWidgets as QtWidgets
+
 import laba_med.reactions
 from laba_med.players.media_player import MediaPlayer
 
@@ -19,34 +22,34 @@ class MediaPlayerReactions(MediaPlayer):
         self._reactions = []  # Список для хранения реакций
         self._timestamps = []  # Список для хранения временных меток
 
-        self.__set_like_button()
-        self.__set_like_count_label()
-        self.__set_dislike_button()
-        self.__set_dislike_count_label()
+        self._set_like_button()
+        self._set_like_count_label()
+        self._set_dislike_button()
+        self._set_dislike_count_label()
 
         # Настройка графика
-        self.__setup_chart()
+        self._setup_chart()
 
-    def __set_like_button(self):
+    def _set_like_button(self):
         self._likeButton = QtWidgets.QPushButton("\ud83d\udc4d Like", self)
-        self._likeButton.clicked.connect(self.like)
+        self._likeButton.clicked.connect(self._like)
         self._likeButton.setGeometry(340, 520, 100, 40)
 
-    def __set_like_count_label(self):
+    def _set_like_count_label(self):
         self._likeCountLabel = QtWidgets.QLabel(f"Likes: {self._likes}", self)
         self._likeCountLabel.setGeometry(10, 460, 200, 40)
         self._likeCountLabel.setStyleSheet(
             "font-size: 16px; font-weight: bold; color: green;"
         )
 
-    def __set_dislike_button(self):
+    def _set_dislike_button(self):
         self._dislikeButton = QtWidgets.QPushButton(
             "\ud83d\udc4e Dislike", self
         )
-        self._dislikeButton.clicked.connect(self.dislike)
+        self._dislikeButton.clicked.connect(self._dislike)
         self._dislikeButton.setGeometry(450, 520, 100, 40)
 
-    def __set_dislike_count_label(self):
+    def _set_dislike_count_label(self):
         self._dislikeCountLabel = QtWidgets.QLabel(
             f"Dislikes: {self._dislikes}", self
         )
@@ -55,7 +58,7 @@ class MediaPlayerReactions(MediaPlayer):
             "font-size: 16px; font-weight: bold; color: red;"
         )
 
-    def __setup_chart(self):
+    def _setup_chart(self):
         """Инициализация графика"""
         self._figure = Figure()
         self._canvas = FigureCanvas(self._figure)
@@ -68,7 +71,7 @@ class MediaPlayerReactions(MediaPlayer):
         (self._line,) = self._ax.plot([], [], label="Balance", color="blue")
         self._ax.legend()
 
-    def like(self):
+    def _like(self):
         """Увеличение количества лайков, сохранение реакции и запись в файл."""
         if self._player.is_playing():
             self._likes += 1
@@ -76,7 +79,7 @@ class MediaPlayerReactions(MediaPlayer):
             self._save_reaction("like", self._player.get_time())
             self._update_chart()
 
-    def dislike(self):
+    def _dislike(self):
         """Увеличение количества дизлайков, сохранение реакции и запись в файл."""
         if self._player.is_playing():
             self._dislikes += 1
@@ -84,13 +87,13 @@ class MediaPlayerReactions(MediaPlayer):
             self._save_reaction("dislike", self._player.get_time())
             self._update_chart()
 
-    def play(self):
+    def _play(self):
         """Пуск воспроизведения видео"""
         super().play()
         self._reset_reactions()
         self._update_chart()
 
-    def stop(self):
+    def _stop(self):
         """Остановка воспроизведения видео"""
         super().stop()
         self._reset_reactions()

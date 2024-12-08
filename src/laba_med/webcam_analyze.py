@@ -1,8 +1,12 @@
+from collections import deque
+import importlib.resources
+import json
+
 import cv2
 import mediapipe as mp  # type: ignore
 import matplotlib.pyplot as plt
-from collections import deque
-import numpy as np
+
+import laba_med.reactions
 
 
 # Инициализация MediaPipe для обнаружения лица и ключевых точек
@@ -50,7 +54,13 @@ def analyze_expression(landmarks):
     }
 
 
-def main():
+def main(video_name: str):
+    file_path = str(
+        importlib.resources.files(laba_med.reactions).joinpath(
+            f"{video_name}_face_recogn.txt"
+        ),
+    )
+
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(
         static_image_mode=False, max_num_faces=1, min_detection_confidence=0.5
@@ -95,6 +105,11 @@ def main():
 
                 # Анализ эмоций
                 expressions = analyze_expression(landmarks)
+
+                with open(file_path, mode="a") as file:
+                    json_reaction = json.dumps(expressions)
+
+                    file.write(json_reaction + "\n")
 
                 # Обновление данных для графика
                 for emotion, intensity in expressions.items():
